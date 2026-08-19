@@ -1,0 +1,10 @@
+# Notification channels for Agent 6. Enable a channel by setting enabled: true.
+# Adding a channel = implementing a notifier class + one entry here.
+
+channels:
+  - type: console
+    enabled: true
+
+  # Email via SMTP (e.g. Gmail). Configure SMTP_* in .env, then set enabled: true.
+  - type: email
+    enabled: false

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Job Agent</title>
+  <style>
+    :root {
+      --bg: #f4f5f7; --surface: #fff; --border: #e6e8eb; --text: #1a1d21;
+      --muted: #6b7280; --accent: #2563eb;
+      --green: #15803d; --green-bg: #dcfce7;
+      --amber: #b45309; --amber-bg: #fef3c7;
+      --red: #b91c1c; --red-bg: #fee2e2;
+      --gray-bg: #f3f4f6; --indigo-bg: #eef2ff; --indigo: #4338ca;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased;
+    }
+    header { background: #0f172a; color: #fff; padding: 1.25rem 2rem; }
+    .header-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    header h1 { font-size: 1.25rem; margin: 0; }
+    .tagline { color: #94a3b8; font-size: 0.85rem; }
+    .stats { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .stat { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 999px; padding: 0.3rem 0.9rem; font-size: 0.82rem; }
+    .stat b { font-weight: 600; }
+    .controls { display: flex; align-items: center; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; }
+    .tabs { display: inline-flex; background: rgba(255,255,255,0.08); border-radius: 999px; padding: 0.2rem; }
+    .tabs a { color: #cbd5e1; text-decoration: none; padding: 0.35rem 0.9rem; border-radius: 999px; font-size: 0.85rem; }
+    .tabs a.active { background: #fff; color: #0f172a; font-weight: 600; }
+    .btn { background: #2563eb; color: #fff; border: none; border-radius: 999px; padding: 0.45rem 1.1rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+    .btn:disabled { background: #64748b; cursor: wait; }
+    .status { font-size: 0.82rem; color: #94a3b8; }
+    .status.running { color: #fbbf24; }
+    .status.done { color: #4ade80; }
+    .status.error { color: #f87171; }
+    main { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; }
+    .search { width: 100%; padding: 0.7rem 1rem; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 1rem; font-size: 1rem; background: var(--surface); }
+    .search:focus { outline: 2px solid var(--accent); outline-offset: 0; }
+    .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    table { width: 100%; border-collapse: collapse; min-width: 820px; }
+    th, td { text-align: left; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { background: #fafbfc; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); white-space: nowrap; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: #f8fafc; }
+    a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    a:hover { text-decoration: underline; }
+    .rank { color: #9ca3af; font-variant-numeric: tabular-nums; text-align: center; white-space: nowrap; }
+    .title { font-weight: 600; }
+    .company { color: var(--text); }
+    .platform { color: var(--muted); font-size: 0.78rem; }
+    .muted { color: var(--muted); font-size: 0.85rem; }
+    .badge { display: inline-block; padding: 0.14rem 0.5rem; border-radius: 999px; font-size: 0.72rem; font-weight: 600; white-space: nowrap; }
+    .score-high { background: var(--green-bg); color: var(--green); }
+    .score-mid { background: var(--amber-bg); color: var(--amber); }
+    .score-low { background: var(--gray-bg); color: var(--muted); }
+    .dup { background: var(--red-bg); color: var(--red); }
+    .tag { background: var(--gray-bg); color: #374151; margin-right: 0.25rem; }
+    .skill { background: var(--indigo-bg); color: var(--indigo); margin: 0.1rem 0.2rem 0.1rem 0; }
+    .empty { text-align: center; padding: 3rem; color: #9ca3af; }
+    .empty code { background: var(--gray-bg); padding: 0.1rem 0.4rem; border-radius: 4px; }
+    footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-top">
+      <div>
+        <h1>Job Agent</h1>
+        <div class="tagline">Job matches from the database</div>
+      </div>
+      <div class="stats">
+        <span class="stat"><b>{{ stats.jobs }}</b> jobs</span>
+        <span class="stat"><b>{{ stats.matched }}</b> matched</span>
+        <span class="stat"><b>{{ stats.ranked }}</b> ranked</span>
+        <span class="stat"><b>{{ stats.duplicates }}</b> duplicates</span>
+      </div>
+    </div>
+    <div class="controls">
+      <nav class="tabs">
+        <a href="?view=all" class="{{ 'active' if view == 'all' else '' }}">All jobs</a>
+        <a href="?view=ranked" class="{{ 'active' if view == 'ranked' else '' }}">Ranked</a>
+      </nav>
+      <button id="run" class="btn">Run pipeline</button>
+      <span id="run-status" class="status"></span>
+    </div>
+  </header>
+
+  <main>
+    <input class="search" id="q" type="search" placeholder="Filter by role, company, location, or skill…" />
+
+    {% if jobs %}
+    <div class="table-wrap">
+      <table id="jobs">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Role</th>
+            <th>Company</th>
+            <th>Location</th>
+            <th>Type</th>
+            <th>Match</th>
+            <th>Skills</th>
+            <th>Posted</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for j in jobs %}
+          <tr data-search="{{ j.title }} {{ j.company }} {{ j.location or '' }} {{ j.matched_skills | join(' ') }}">
+            <td class="rank">{{ j.rank if j.rank is not none else '—' }}</td>
+            <td>
+              <div class="title">
+                {% if j.apply_url %}<a href="{{ j.apply_url }}" target="_blank" rel="noopener">{{ j.title }}</a>{% else %}{{ j.title }}{% endif %}
+                {% if j.is_duplicate %}<span class="badge dup">dup</span>{% endif %}
+              </div>
+              {% if j.description %}<div class="muted" title="{{ j.description }}">{{ j.description }}</div>{% endif %}
+            </td>
+            <td>
+              <div class="company">{{ j.company }}</div>
+              <div class="platform">{{ j.platform }}</div>
+            </td>
+            <td class="muted">{{ j.location or '—' }}</td>
+            <td>
+              {% if j.work_mode %}<span class="badge tag">{{ j.work_mode }}</span>{% endif %}
+              {% if j.job_type %}<span class="badge tag">{{ j.job_type }}</span>{% endif %}
+            </td>
+            <td>
+              {% if j.rank_score is not none %}
+                {% set pct = (j.rank_score * 100) | round | int %}
+                <span class="badge {{ 'score-high' if pct >= 30 else 'score-mid' if pct >= 15 else 'score-low' }}">{{ pct }}%</span>
+              {% else %}<span class="muted">—</span>{% endif %}
+            </td>
+            <td>
+              {% for s in j.matched_skills %}<span class="badge skill">{{ s }}</span>{% endfor %}
+              {% if not j.matched_skills %}<span class="muted">—</span>{% endif %}
+            </td>
+            <td class="muted">{{ j.posted_at or '—' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty">No jobs yet. Run <code>job-agent run</code> or click "Run pipeline".</div>
+    {% endif %}
+  </main>
+
+  <footer>Job Agent · auto-refreshes every {{ refresh_seconds }}s</footer>
+
+  <script>
+    const REFRESH_MS = {{ refresh_seconds }} * 1000;
+
+    const statusEl = document.getElementById('run-status');
+
+    async function updateStatus() {
+      try {
+        const r = await fetch('/api/status');
+        const s = await r.json();
+        if (s.status === 'running') {
+          statusEl.textContent = 'Running…';
+          statusEl.className = 'status running';
+        } else if (s.status === 'completed') {
+          statusEl.textContent = 'Last run completed';
+          statusEl.className = 'status done';
+        } else if (s.status === 'failed') {
+          statusEl.textContent = 'Last run failed' + (s.error ? ': ' + s.error : '');
+          statusEl.className = 'status error';
+        } else {
+          statusEl.textContent = '';
+          statusEl.className = 'status';
+        }
+      } catch (e) { /* ignore */ }
+    }
+
+    document.getElementById('run').addEventListener('click', async () => {
+      const btn = document.getElementById('run');
+      btn.disabled = true;
+      btn.textContent = 'Starting…';
+      try { await fetch('/run', { method: 'POST' }); } catch (e) {}
+      updateStatus();
+    });
+
+    updateStatus();
+    setInterval(updateStatus, 5000);
+
+    if (REFRESH_MS > 0) {
+      setTimeout(() => location.reload(), REFRESH_MS);
+    }
+
+    const q = document.getElementById('q');
+    q.addEventListener('input', () => {
+      const term = q.value.toLowerCase();
+      document.querySelectorAll('#jobs tbody tr').forEach(tr => {
+        tr.style.display = tr.dataset.search.toLowerCase().includes(term) ? '' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>

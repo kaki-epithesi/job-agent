@@ -1,0 +1,166 @@
+# Location filter for Agent 1 (discovery). A job is kept only if its location
+# matches one of these keywords. Leave empty to disable filtering.
+locations:
+  - bengaluru
+  - bangalore
+
+sources:
+  # Greenhouse boards (verified)
+  - id: greenhouse:databricks
+    type: greenhouse
+    enabled: true
+    config:
+      board: databricks
+      limit: 30
+
+  - id: greenhouse:cloudflare
+    type: greenhouse
+    enabled: true
+    config:
+      board: cloudflare
+      limit: 30
+
+  - id: greenhouse:mongodb
+    type: greenhouse
+    enabled: true
+    config:
+      board: mongodb
+      limit: 30
+
+  - id: greenhouse:postman
+    type: greenhouse
+    enabled: true
+    config:
+      board: postman
+      limit: 30
+
+  - id: greenhouse:devrev
+    type: greenhouse
+    enabled: true
+    config:
+      board: devrev
+      limit: 30
+
+  - id: greenhouse:phonepe
+    type: greenhouse
+    enabled: true
+    config:
+      board: phonepe
+      limit: 30
+
+  - id: greenhouse:rubrik
+    type: greenhouse
+    enabled: true
+    config:
+      board: rubrik
+      limit: 30
+
+  - id: greenhouse:stripe
+    type: greenhouse
+    enabled: true
+    config:
+      board: stripe
+      limit: 30
+
+  - id: greenhouse:zscaler
+    type: greenhouse
+    enabled: true
+    config:
+      board: zscaler
+      limit: 30
+
+  # Lever boards (verified)
+  - id: lever:meesho
+    type: lever
+    enabled: true
+    config:
+      company: meesho
+      limit: 30
+
+  - id: lever:cred
+    type: lever
+    enabled: true
+    config:
+      company: cred
+      limit: 30
+
+  # Ashby boards (verified)
+  - id: ashby:confluent
+    type: ashby
+    enabled: true
+    config:
+      board: confluent
+      limit: 30
+
+  - id: ashby:snowflake
+    type: ashby
+    enabled: true
+    config:
+      board: snowflake
+      limit: 30
+
+  - id: ashby:openai
+    type: ashby
+    enabled: true
+    config:
+      board: openai
+      limit: 30
+
+  # SmartRecruiters boards (verified)
+  - id: smartrecruiters:freshworks
+    type: smartrecruiters
+    enabled: true
+    config:
+      company: freshworks
+      limit: 30
+
+  - id: smartrecruiters:servicenow
+    type: smartrecruiters
+    enabled: true
+    config:
+      company: servicenow
+      limit: 30
+
+  - id: smartrecruiters:swiggy
+    type: smartrecruiters
+    enabled: true
+    config:
+      company: swiggy
+      limit: 30
+
+  # Company-specific connectors
+  - id: amazon
+    type: amazon
+    enabled: true
+    config:
+      query: software engineer
+      limit: 25
+
+  # --- Experimental / not yet enabled -----------------------------------
+  # Custom portals (Google, Microsoft, Apple, Meta, Atlassian, Uber, Oracle,
+  # SAP, JPMorgan, Goldman Sachs, Morgan Stanley, Barclays, HSBC, etc.) and
+  # Workday tenants (Adobe, Salesforce, Wells Fargo, PayPal, Intuit, Visa,
+  # Mastercard, American Express, BNY, Nasdaq) need dedicated connectors.
+  # They are intentionally left out until those connectors are built.
+
+  - id: google
+    type: google
+    enabled: false
+    config:
+      query: software engineer
+
+  - id: workday:salesforce
+    type: workday
+    enabled: false
+    config:
+      host: salesforce.wd1.myworkdayjobs.com
+      tenant: salesforce
+      site: External
+
+  - id: linkedin
+    type: linkedin
+    enabled: false
+    config:
+      keywords:
+        - "Hiring Software Engineer"
+        - "Hiring Backend Engineer"

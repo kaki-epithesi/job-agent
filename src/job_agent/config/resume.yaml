@@ -1,0 +1,35 @@
+# The user's profile used by Agent 4 (Resume Matching).
+# Edit these to reflect your own background and preferences.
+
+skills:
+  - python
+  - java
+  - sql
+  - docker
+  - kubernetes
+  - aws
+
+roles:
+  - software engineer
+  - backend engineer
+
+keywords:
+  - distributed systems
+  - microservices
+
+locations:
+  - remote
+  - seattle
+  - san francisco
+  - palo alto
+
+# Role keywords for Agent 5 (Ranking). Only jobs whose title matches one of
+# these are ranked/notified. Keep these precise (e.g. "engineer" catches
+# "Software/AI/ML Engineer" but not "Engineering Manager").
+target_roles:
+  - engineer
+  - developer
+  - sde
+  - data scientist
+  - applied scientist
+  - software architect

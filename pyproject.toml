@@ -1,0 +1,37 @@
+[project]
+name = "job-agent"
+version = "0.1.0"
+description = "Extensible, open-source job discovery platform."
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "aiosqlite>=0.21.0",
+    "fastapi>=0.115.0",
+    "httpx>=0.28.1",
+    "jinja2>=3.1.5",
+    "playwright>=1.60.0",
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.11.0",
+    "pyyaml>=6.0.3",
+    "sqlalchemy[asyncio]>=2.0.51",
+    "tenacity>=9.1.2",
+    "typer>=0.23.2",
+    "uvicorn[standard]>=0.30.0",
+]
+
+[project.scripts]
+job-agent = "job_agent.cli.main:main"
+
+[build-system]
+requires = ["uv_build>=0.12.1,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+    "pytest-asyncio>=0.26.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

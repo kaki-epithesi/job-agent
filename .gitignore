@@ -1,0 +1,32 @@
+# Virtual Environment
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Environment
+.env
+
+# Database
+*.db
+
+# Data
+data/raw/*
+data/processed/*
+data/resume.yaml
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+
+# Playwright
+playwright-report/
+test-results/
+
+# Browser Profiles
+data/profiles/
