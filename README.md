@@ -40,7 +40,7 @@ ready-to-act-on opportunities.
 The system is a **pipeline of independent agents** that communicate only through typed
 models and shared storage.
 
-```mermaid
+```text
 flowchart TD
     User[User] -->|CLI / config| Orchestrator[Orchestrator]
     Orchestrator --> A1[Agent 1: Source Discovery]
